@@ -8,10 +8,10 @@ import { ImageGalleryUl, Container } from './ImageGallery.styled';
 import { fetchGalleryImg } from '../../Api/fetchGalleryImg';
 
 export function ImageGallery({ showModal, searchQuery }) {
-  const [images, setImages] = useState(null);
+  const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
-  const [hiddenBnt, setHiddenBnt] = useState(false);
+  const [hiddenBnt, setHiddenBnt] = useState(true);
 
   const showErrorMsg = () => {
     toast.error('Sorry, there are no more images matching your search query.');
@@ -19,32 +19,16 @@ export function ImageGallery({ showModal, searchQuery }) {
 
   const onFindMore = () => {
     setPage(prevPage => prevPage + 1);
-    // setLoading(true);
-    // setHiddenBnt(false);
-
-    // fetchGalleryImg(searchQuery, page)
-    //   .then(({ hits, totalHits }) => {
-    //     if (hits.length === 0) {
-    //       showErrorMsg();
-    //       setHiddenBnt(true);
-    //     } else setImages(prevImages => [...prevImages, ...hits]);
-    //     if (12 * page > totalHits) {
-    //       setHiddenBnt(true);
-    //       showErrorMsg();
-    //     }
-    //   })
-    //   .catch(error => error)
-    //   .finally(() => setLoading(false));
   };
 
   useEffect(() => {
     if (searchQuery === '') {
       return;
     }
-    // setLoading(true);
-    setImages(null);
-    setPage(1);
-    setHiddenBnt(false);
+
+    // setImages(null);
+    // setPage(1);
+    // setHiddenBnt(true);
 
     getImages(searchQuery, page);
   }, [searchQuery, page]);
@@ -53,13 +37,12 @@ export function ImageGallery({ showModal, searchQuery }) {
     setLoading(true);
     fetchGalleryImg(searchQuery, page)
       .then(({ hits, totalHits }) => {
-        if (hits.length === 0) {
+        if (hits.length === 0 || 12 * page > totalHits) {
           showErrorMsg();
           setHiddenBnt(true);
-        } else setImages(prevImages => [...prevImages, ...hits]);
-        if (12 * page > totalHits) {
-          setHiddenBnt(true);
-          showErrorMsg();
+        } else {
+          setImages(prevImages => [...prevImages, ...hits]);
+          setHiddenBnt(false);
         }
       })
       .catch(error => error)
@@ -75,16 +58,16 @@ export function ImageGallery({ showModal, searchQuery }) {
           {images.map(image => {
             return (
               <ImageGalleryItem
-                showModal={() => showModal(image.largeImageURL)}
                 key={image.id}
                 smallImg={image.webformatURL}
                 alt={image.tags}
+                showModal={() => showModal(image.largeImageURL)}
               />
             );
           })}
         </ImageGalleryUl>
       )}
-      {images && !hiddenBnt && <Button onFindMore={() => onFindMore()} />}
+      {!hiddenBnt && <Button onFindMore={() => onFindMore()} />}
     </Container>
   );
 }

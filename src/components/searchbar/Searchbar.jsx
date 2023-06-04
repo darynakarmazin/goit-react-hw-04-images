@@ -20,8 +20,8 @@ export function Searchbar({ onSubmit }) {
   };
 
   return (
-    <SearchbarHeader onSubmit={handleSubmit} className="searchbar">
-      <SearchForm className="form">
+    <SearchbarHeader className="searchbar">
+      <SearchForm onSubmit={handleSubmit} className="form">
         <button type="submit" className="button">
           <span className="button-label">Search</span>
         </button>
