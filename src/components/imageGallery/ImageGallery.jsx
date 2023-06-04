@@ -19,44 +19,52 @@ export function ImageGallery({ showModal, searchQuery }) {
 
   const onFindMore = () => {
     setPage(prevPage => prevPage + 1);
-    setLoading(true);
-    setHiddenBnt(false);
+    // setLoading(true);
+    // setHiddenBnt(false);
 
-    setTimeout(() => {
-      fetchGalleryImg(searchQuery, page)
-        .then(({ hits, totalHits }) => {
-          if (hits.length === 0) {
-            showErrorMsg();
-            setHiddenBnt(true);
-          } else setImages(prevImages => [...prevImages, ...hits]);
-          if (12 * page > totalHits) {
-            setHiddenBnt(true);
-            showErrorMsg();
-          }
-        })
-        .catch(error => error)
-        .finally(() => setLoading(false));
-    });
+    // fetchGalleryImg(searchQuery, page)
+    //   .then(({ hits, totalHits }) => {
+    //     if (hits.length === 0) {
+    //       showErrorMsg();
+    //       setHiddenBnt(true);
+    //     } else setImages(prevImages => [...prevImages, ...hits]);
+    //     if (12 * page > totalHits) {
+    //       setHiddenBnt(true);
+    //       showErrorMsg();
+    //     }
+    //   })
+    //   .catch(error => error)
+    //   .finally(() => setLoading(false));
   };
 
   useEffect(() => {
     if (searchQuery === '') {
       return;
     }
-    setLoading(true);
+    // setLoading(true);
     setImages(null);
     setPage(1);
     setHiddenBnt(false);
 
+    getImages(searchQuery, page);
+  }, [searchQuery, page]);
+
+  const getImages = (searchQuery, page) => {
+    setLoading(true);
     fetchGalleryImg(searchQuery, page)
-      .then(({ hits }) => {
+      .then(({ hits, totalHits }) => {
         if (hits.length === 0) {
           showErrorMsg();
-        } else setImages(hits);
+          setHiddenBnt(true);
+        } else setImages(prevImages => [...prevImages, ...hits]);
+        if (12 * page > totalHits) {
+          setHiddenBnt(true);
+          showErrorMsg();
+        }
       })
       .catch(error => error)
       .finally(() => setLoading(false));
-  }, [searchQuery]);
+  };
 
   return (
     <Container>
