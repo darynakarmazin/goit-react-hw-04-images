@@ -1,45 +1,41 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import { toast } from 'react-toastify';
 import { SearchbarHeader, SearchForm } from './Searchbar.styled';
 
-export class Searchbar extends Component {
-  state = {
-    searchQuery: '',
+export function Searchbar({ onSubmit }) {
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const handleQueryChange = event => {
+    setSearchQuery(event.currentTarget.value.toLowerCase());
   };
 
-  handleQueryChange = event => {
-    this.setState({ searchQuery: event.currentTarget.value.toLowerCase() });
-  };
-
-  handleSubmit = event => {
+  const handleSubmit = event => {
     event.preventDefault();
-    if (this.state.searchQuery.trim() === '') {
+    if (searchQuery.trim() === '') {
       toast.error('Enter a keyword');
       return;
     }
-    this.props.onSubmit(this.state.searchQuery);
-    this.setState({ searchQuery: '' });
+    onSubmit(searchQuery);
+    setSearchQuery('');
   };
 
-  render() {
-    return (
-      <SearchbarHeader onSubmit={this.handleSubmit} className="searchbar">
-        <SearchForm className="form">
-          <button type="submit" className="button">
-            <span className="button-label">Search</span>
-          </button>
+  return (
+    <SearchbarHeader onSubmit={handleSubmit} className="searchbar">
+      <SearchForm className="form">
+        <button type="submit" className="button">
+          <span className="button-label">Search</span>
+        </button>
 
-          <input
-            onChange={this.handleQueryChange}
-            value={this.state.searchQuery}
-            className="input"
-            type="text"
-            autoComplete="off"
-            autoFocus
-            placeholder="Search images and photos"
-          />
-        </SearchForm>
-      </SearchbarHeader>
-    );
-  }
+        <input
+          onChange={handleQueryChange}
+          value={searchQuery}
+          className="input"
+          type="text"
+          autoComplete="off"
+          autoFocus
+          placeholder="Search images and photos"
+        />
+      </SearchForm>
+    </SearchbarHeader>
+  );
 }
