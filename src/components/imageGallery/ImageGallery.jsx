@@ -37,12 +37,16 @@ export function ImageGallery({ showModal, searchQuery }) {
     setLoading(true);
     fetchGalleryImg(searchQuery, page)
       .then(({ hits, totalHits }) => {
-        if (hits.length === 0 || 12 * page > totalHits) {
+        if (hits.length === 0) {
           showErrorMsg();
           setHiddenBnt(true);
         } else {
           setImages(prevImages => [...prevImages, ...hits]);
           setHiddenBnt(false);
+        }
+        if (12 * page > totalHits) {
+          showErrorMsg();
+          setHiddenBnt(true);
         }
       })
       .catch(error => error)
