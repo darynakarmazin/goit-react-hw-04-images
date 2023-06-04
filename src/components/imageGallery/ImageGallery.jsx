@@ -22,7 +22,6 @@ export function ImageGallery({ showModal, searchQuery }) {
     setLoading(true);
     setHiddenBnt(false);
 
-  
     setTimeout(() => {
       fetchGalleryImg(searchQuery, page)
         .then(({ hits, totalHits }) => {
@@ -41,7 +40,7 @@ export function ImageGallery({ showModal, searchQuery }) {
   };
 
   useEffect(() => {
-    if (searchQuery === "") {
+    if (searchQuery === '') {
       return;
     }
     setLoading(true);
@@ -49,16 +48,14 @@ export function ImageGallery({ showModal, searchQuery }) {
     setPage(1);
     setHiddenBnt(false);
 
-    setTimeout(() => {
-      fetchGalleryImg(searchQuery, page)
-        .then(({ hits }) => {
-          if (hits.length === 0) {
-            showErrorMsg();
-          } else setImages(hits);
-        })
-        .catch(error => error)
-        .finally(() => setLoading(false));
-    });
+    fetchGalleryImg(searchQuery, page)
+      .then(({ hits }) => {
+        if (hits.length === 0) {
+          showErrorMsg();
+        } else setImages(hits);
+      })
+      .catch(error => error)
+      .finally(() => setLoading(false));
   }, [searchQuery]);
 
   return (
