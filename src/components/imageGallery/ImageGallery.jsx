@@ -12,15 +12,7 @@ export function ImageGallery({ showModal, searchQuery }) {
   const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
-  const [hiddenBnt, setHiddenBnt] = useState(true);
-
-  const showErrorMsg = () => {
-    toast.error('Sorry, there are no more images matching your search query.');
-  };
-
-  const onFindMore = () => {
-    setPage(prevPage => prevPage + 1);
-  };
+  const [isVisibleButton, setIsVisibleButton] = useState(true);
 
   useEffect(() => {
     if (searchQuery === '') {
@@ -30,11 +22,19 @@ export function ImageGallery({ showModal, searchQuery }) {
       setQuery(searchQuery);
       setImages([]);
       setPage(1);
-      setHiddenBnt(true);
+      setIsVisibleButton(true);
     }
 
     getImages(searchQuery, page);
   }, [searchQuery, page]);
+
+  const showErrorMsg = () => {
+    toast.error('Sorry, there are no more images matching your search query.');
+  };
+
+  const onFindMore = () => {
+    setPage(prevPage => prevPage + 1);
+  };
 
   const getImages = (searchQuery, page) => {
     setLoading(true);
@@ -42,14 +42,13 @@ export function ImageGallery({ showModal, searchQuery }) {
       .then(({ hits, totalHits }) => {
         if (hits.length === 0) {
           showErrorMsg();
-          setHiddenBnt(true);
-          return;
+          setIsVisibleButton(true);
         } else {
           setImages(prevImages => [...prevImages, ...hits]);
-          setHiddenBnt(false);
+          setIsVisibleButton(false);
           if (12 * page > totalHits) {
             showErrorMsg();
-            setHiddenBnt(true);
+            setIsVisibleButton(true);
           }
         }
       })
@@ -75,7 +74,7 @@ export function ImageGallery({ showModal, searchQuery }) {
           })}
         </ImageGalleryUl>
       )}
-      {!hiddenBnt && <Button onFindMore={() => onFindMore()} />}
+      {!isVisibleButton && <Button onFindMore={onFindMore} />}
     </Container>
   );
 }
